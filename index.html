@@ -2,185 +2,139 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Caesar Key Finder</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Universal Decryption Lab</title>
 <style>
-:root{color-scheme:dark;--bg:#080d18;--panel:#111a2b;--line:#263650;--text:#edf4ff;--muted:#9aabc4;--accent:#65e0c2;--accent2:#6ea8ff}
-*{box-sizing:border-box}
-body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 15% 0%,#142944 0,transparent 42%),var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
-main{width:min(980px,92%);margin:48px auto}
-header{margin-bottom:28px}
-.eyebrow{color:var(--accent);font-size:.78rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase}
-h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.05;margin:10px 0}
-.sub{color:var(--muted);max-width:650px}
-.panel{background:linear-gradient(145deg,#141f33,#0e1727);border:1px solid var(--line);border-radius:18px;padding:24px;margin:18px 0;box-shadow:0 18px 50px #0003}
-label{display:block;font-weight:700;margin-bottom:9px}
-textarea{width:100%;min-height:125px;resize:vertical;background:#08111f;color:var(--text);border:1px solid #344761;border-radius:12px;padding:15px;font:inherit;outline:none}
-textarea:focus{border-color:var(--accent2);box-shadow:0 0 0 3px #6ea8ff22}
-.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
-button{border:0;border-radius:10px;padding:12px 19px;font-weight:800;font-size:.95rem;cursor:pointer}
-.primary{background:var(--accent);color:#062019}
-.secondary{background:#24334b;color:var(--text)}
-button:hover{filter:brightness(1.1)}
-.hint{font-size:.85rem;color:var(--muted);margin-top:9px}
-.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.result-card{background:#0a1423;border:1px solid var(--line);border-radius:13px;padding:17px}
-.result-card .label{font-size:.78rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;font-weight:800}
-.result-card .value{font-size:1.5rem;font-weight:850;margin-top:5px;overflow-wrap:anywhere}
-.green{color:var(--accent)}
-.message{font-size:1.15rem!important;white-space:pre-wrap}
-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:.92rem}
-th,td{text-align:left;padding:11px 9px;border-bottom:1px solid var(--line)}
-th{color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em}
-tr.best{background:#65e0c211}
-tr.best td:first-child{color:var(--accent);font-weight:800}
-.hidden{display:none}
-footer{text-align:center;color:var(--muted);font-size:.82rem;padding:18px}
-@media(max-width:600px){main{margin:28px auto}.panel{padding:17px}.result-grid{grid-template-columns:1fr}th,td{padding:9px 5px;font-size:.82rem}}
+:root{color-scheme:dark;--bg:#080d18;--panel:#111b2c;--panel2:#0b1423;--line:#293b55;--txt:#edf4ff;--muted:#9aabc1;--teal:#65e0c2;--blue:#76aaff;--red:#ff9a9a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 10% 0%,#17304c 0,transparent 40%),var(--bg);color:var(--txt);font:15px/1.5 system-ui,Segoe UI,sans-serif}
+main{width:min(1100px,94%);margin:38px auto}.eyebrow{color:var(--teal);font-weight:800;font-size:.76rem;letter-spacing:.18em;text-transform:uppercase}
+h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.05;margin:9px 0}.sub{color:var(--muted);max-width:760px}
+.panel{background:linear-gradient(145deg,#142137,#0e1727);border:1px solid var(--line);border-radius:17px;padding:22px;margin:18px 0;box-shadow:0 15px 45px #0003}
+.grid{display:grid;grid-template-columns:1.3fr .7fr;gap:16px}label{display:block;font-weight:750;margin:0 0 8px}
+textarea,input,select{width:100%;background:#08111f;border:1px solid #354a66;color:var(--txt);border-radius:10px;padding:12px;font:inherit;outline:none}
+textarea{min-height:170px;resize:vertical}textarea:focus,input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px #76aaff20}
+.field{margin-bottom:14px}.hint{font-size:.83rem;color:var(--muted);margin-top:7px}
+button{border:0;border-radius:10px;padding:12px 17px;font-weight:800;cursor:pointer;font-size:.92rem}
+.primary{background:var(--teal);color:#06221b}.secondary{background:#263750;color:var(--txt)}button:hover{filter:brightness(1.1)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.result{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:15px;margin-top:12px}
+.big{font-size:1.12rem;overflow-wrap:anywhere;white-space:pre-wrap}.muted{color:var(--muted)}.good{color:var(--teal)}.warn{color:#ffd28b}
+.pills{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.pill{border:1px solid var(--line);border-radius:30px;padding:5px 10px;color:var(--muted);font-size:.78rem}
+table{width:100%;border-collapse:collapse;margin-top:10px}th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:.76rem;color:var(--muted);text-transform:uppercase}
+.hidden{display:none}.history-item{padding:10px 0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+footer{text-align:center;color:var(--muted);padding:20px;font-size:.82rem}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.panel{padding:16px}main{margin:25px auto}}
 </style>
 </head>
 <body>
 <main>
 <header>
-  <div class="eyebrow">Cryptanalysis Lab / 001</div>
-  <h1>Caesar <span style="color:var(--accent)">Key Finder</span></h1>
-  <p class="sub">Enter an encrypted message. The engine tests every Caesar shift from 0 to 25, scores the results using common English words, and displays its best guess with the key.</p>
+<div class="eyebrow">Cryptanalysis • Encoding • Decoder</div>
+<h1>Universal <span style="color:var(--teal)">Decryption Lab</span></h1>
+<p class="sub">One workspace for common text encodings and classical ciphers. Paste text, run automatic detection, compare candidate results, or choose a method yourself.</p>
+<div class="pills"><span class="pill">Caesar</span><span class="pill">ROT13</span><span class="pill">Atbash</span><span class="pill">Base64</span><span class="pill">Hex</span><span class="pill">Binary</span><span class="pill">URL</span><span class="pill">Morse</span><span class="pill">Vigenère</span><span class="pill">XOR</span></div>
 </header>
 
 <section class="panel">
-  <label for="ciphertext">Encrypted message</label>
-  <textarea id="ciphertext" placeholder="Example: WKLV LV D VHFUHW PHVVDJH"></textarea>
-  <div class="actions">
-    <button class="primary" id="solve">Find decryption key</button>
-    <button class="secondary" id="example">Load example</button>
-    <button class="secondary" id="clear">Clear</button>
-  </div>
-  <div class="hint">Works with A–Z and a–z. Spaces, numbers and punctuation are preserved. Processing happens locally in your browser.</div>
+<div class="grid">
+<div>
+<label for="input">Encrypted / encoded text</label>
+<textarea id="input" spellcheck="false" placeholder="Paste your text here..."></textarea>
+<div class="hint">Your text is processed locally in this browser; it is not uploaded to a server.</div>
+</div>
+<div>
+<div class="field"><label for="method">Method</label>
+<select id="method">
+<option value="auto">Auto-detect (recommended)</option>
+<option value="caesar">Caesar — try all 26 shifts</option>
+<option value="rot13">ROT13</option>
+<option value="atbash">Atbash</option>
+<option value="base64">Base64</option>
+<option value="hex">Hexadecimal</option>
+<option value="binary">Binary (8-bit)</option>
+<option value="url">URL decoding</option>
+<option value="morse">Morse code</option>
+<option value="vigenere">Vigenère (key required)</option>
+<option value="xor">Repeating-key XOR (key required)</option>
+</select></div>
+<div class="field" id="keyField"><label for="key">Key (for Vigenère / XOR)</label><input id="key" placeholder="Enter known key"></div>
+<div class="field"><label for="shift">Caesar shift direction</label><select id="direction"><option value="decrypt">Decrypt (reverse shift)</option><option value="encrypt">Undo reverse direction</option></select></div>
+</div>
+</div>
+<div class="actions">
+<button class="primary" id="run">AUTO-DETECT &amp; DECRYPT</button>
+<button class="secondary" id="sample">Load sample</button>
+<button class="secondary" id="clear">Clear</button>
+</div>
 </section>
 
-<section id="results" class="hidden">
-  <div class="panel">
-    <div class="eyebrow">Best candidate</div>
-    <div class="result-grid" style="margin-top:14px">
-      <div class="result-card">
-        <div class="label">Discovered key</div>
-        <div class="value green" id="bestKey">—</div>
-      </div>
-      <div class="result-card">
-        <div class="label">Dictionary matches</div>
-        <div class="value" id="bestScore">—</div>
-      </div>
-      <div class="result-card" style="grid-column:1/-1">
-        <div class="label">Decrypted data</div>
-        <div class="value message" id="bestMessage">—</div>
-      </div>
-    </div>
-    <p class="hint" id="confidence"></p>
-  </div>
-  <div class="panel">
-    <h2 style="margin:0">All 26 possibilities</h2>
-    <p class="hint">The highest-scoring result is highlighted. A dictionary score is a clue, not proof; short messages may have multiple plausible answers.</p>
-    <div style="overflow-x:auto">
-      <table>
-        <thead><tr><th>Key</th><th>Decrypted text</th><th>Word matches</th></tr></thead>
-        <tbody id="attempts"></tbody>
-      </table>
-    </div>
-  </div>
+<section id="output" class="panel hidden">
+<div class="eyebrow">Analysis results</div>
+<h2 id="resultTitle">Best candidate</h2>
+<div class="result"><div class="muted" id="methodName">Detected method</div><div class="big good" id="decoded" style="margin-top:7px"></div><div class="hint" id="details"></div></div>
+<div class="hint" id="caveat"></div>
+<div id="candidateArea" style="margin-top:20px">
+<h3>Candidate results</h3><div style="overflow-x:auto"><table><thead><tr><th>Method</th><th>Key / details</th><th>Readable output</th></tr></thead><tbody id="candidates"></tbody></table></div>
+</div>
 </section>
-<footer>Caesar Key Finder · Educational cryptography project</footer>
+
+<section class="panel">
+<h2 style="margin:0 0 8px">What this tool can and cannot do</h2>
+<p class="muted">Encoding is not the same as encryption. Base64, hexadecimal and URL encoding are reversible formats, not secret-key encryption. Caesar, ROT13 and Atbash are classical ciphers. Vigenère and XOR need a key in this version.</p>
+<p class="muted">This is not a universal breaker. Strong modern encryption (for example, properly used AES or RSA) cannot be recovered just by trying text transformations; you need the appropriate key and parameters. Hashes are one-way digests, not encrypted text.</p>
+</section>
+<section class="panel">
+<h2 style="margin:0 0 8px">Recent results</h2><div id="history" class="muted">No results yet.</div>
+</section>
+<footer>Universal Decryption Lab · Educational tool · Local browser processing</footer>
 </main>
 <script>
 "use strict";
-
-const dictionary = new Set((
-  "a about above after again all am an and any are as at be because been before " +
-  "being below between both but by can could did do does doing down during each " +
-  "few for from further had has have having he her here hers him his how i if in " +
-  "into is it its itself just me more most my no nor not now of off on once only " +
-  "or other our out over own same she should so some such than that the their " +
-  "them then there these they this those through to too under until up very was " +
-  "we were what when where which while who why will with would you your " +
-  "hello world secret message this test text code key find finder decrypt " +
-  "decrypted encryption cipher caesar meet at dawn attack tomorrow"
-).split(/\s+/));
-
-function decryptCaesar(text, shift) {
-  let output = "";
-  for (const character of text) {
-    const code = character.charCodeAt(0);
-    if (code >= 65 && code <= 90) {
-      output += String.fromCharCode(65 + ((code - 65 - shift + 26) % 26));
-    } else if (code >= 97 && code <= 122) {
-      output += String.fromCharCode(97 + ((code - 97 - shift + 26) % 26));
-    } else {
-      output += character;
-    }
-  }
-  return output;
+const $=id=>document.getElementById(id);
+const morseMap={".-":"A","-...":"B","-.-.":"C","-..":"D",".":"E","..-.":"F","--.":"G","....":"H","..":"I",".---":"J","-.-":"K",".-..":"L","--":"M","-.":"N","---":"O",".--.":"P","--.-":"Q",".-.":"R","...":"S","-":"T","..-":"U","...-":"V",".--":"W","-..-":"X","-.--":"Y","--..":"Z","-----":"0",".----":"1","..---":"2","...--":"3","....-":"4",".....":"5","-....":"6","--...":"7","---..":"8","----.":"9"};
+const common=new Set(("the be to of and a in that have i it for not on with he as you do at this but his by from they we say her she or an will my one all would there their what so up out if about who get which go me when make can like time no just him know take people into year your good some could them see other than then now look only come its over think also back after use two how our work first well way even new want because these give day most us is are was were been being hello world secret message test").split(/\s+/));
+function caesar(s,k){let out="";for(const c of s){let n=c.charCodeAt(0);if(n>=65&&n<=90)out+=String.fromCharCode(65+(n-65-k+260)%26);else if(n>=97&&n<=122)out+=String.fromCharCode(97+(n-97-k+260)%26);else out+=c;}return out;}
+function atbash(s){return [...s].map(c=>{let n=c.charCodeAt(0);if(n>=65&&n<=90)return String.fromCharCode(90-(n-65));if(n>=97&&n<=122)return String.fromCharCode(122-(n-97));return c;}).join("");}
+function textScore(s){let words=s.toLowerCase().match(/[a-z]+/g)||[];let hits=words.filter(w=>common.has(w)).length;let letters=(s.match(/[A-Za-z]/g)||[]).length;let printable=(s.match(/[\x20-\x7E\n\r\t]/g)||[]).length;return hits*5+(letters?Math.max(0,printable/(s.length||1))*1.5:0);}
+function decodeB64(s){let clean=s.replace(/\s+/g,"");if(!/^[A-Za-z0-9+/]*={0,2}$/.test(clean)||clean.length%4===1)throw Error("Input does not look like valid Base64.");let bin=atob(clean);let bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));return new TextDecoder("utf-8",{fatal:true}).decode(bytes);}
+function decodeHex(s){let clean=s.replace(/[\s,:-]/g,"");if(!clean||clean.length%2||!/^[0-9a-f]+$/i.test(clean))throw Error("Hex must contain an even number of hexadecimal digits.");let bytes=new Uint8Array(clean.match(/../g).map(x=>parseInt(x,16)));return new TextDecoder("utf-8",{fatal:true}).decode(bytes);}
+function decodeBinary(s){let groups=s.trim().split(/\s+/);if(!groups.length||groups.some(x=>!/^[01]{8}$/.test(x)))throw Error("Enter binary as space-separated 8-bit groups.");return new TextDecoder().decode(new Uint8Array(groups.map(x=>parseInt(x,2))));}
+function decodeMorse(s){let words=s.trim().split(/\s{3,}|\s*\/\s*/);return words.map(w=>w.trim().split(/\s+/).map(x=>morseMap[x]||"?").join("")).join(" ");}
+function vigenere(s,key){if(!/^[a-z]+$/i.test(key))throw Error("Vigenère key must contain letters only.");let j=0,out="";for(const c of s){let n=c.charCodeAt(0),base=n>=65&&n<=90?65:n>=97&&n<=122?97:-1;if(base<0){out+=c;continue;}let k=key.toUpperCase().charCodeAt(j++%key.length)-65;out+=String.fromCharCode(base+(n-base-k+26)%26);}return out;}
+function xorDecode(s,key){if(!key)throw Error("Enter an XOR key.");let bytes=Array.from(s).map((c,i)=>c.charCodeAt(0)^key.charCodeAt(i%key.length));return new TextDecoder().decode(new Uint8Array(bytes));}
+function attempt(method,input,key,direction){
+switch(method){
+case"caesar":{let a=[];for(let k=0;k<26;k++){let shift=direction==="decrypt"?k:(26-k)%26;let text=caesar(input,shift);a.push({method:"Caesar",key:"Shift "+k,text,score:textScore(text)});}return a.sort((x,y)=>y.score-x.score);}
+case"rot13":return[{method:"ROT13",key:"Fixed shift 13",text:caesar(input,13),score:textScore(caesar(input,13))}];
+case"atbash":return[{method:"Atbash",key:"No key",text:atbash(input),score:textScore(atbash(input))}];
+case"base64":{let t=decodeB64(input);return[{method:"Base64",key:"Decoded",text:t,score:textScore(t)+3}];}
+case"hex":{let t=decodeHex(input);return[{method:"Hexadecimal",key:"Decoded UTF-8",text:t,score:textScore(t)+3}];}
+case"binary":{let t=decodeBinary(input);return[{method:"Binary",key:"Decoded UTF-8",text:t,score:textScore(t)+3}];}
+case"url":{let t=decodeURIComponent(input.replace(/\+/g," "));return[{method:"URL decoding",key:"Decoded",text:t,score:textScore(t)+3}];}
+case"morse":{let t=decodeMorse(input);return[{method:"Morse",key:"Decoded",text:t,score:textScore(t)+2}];}
+case"vigenere":{let t=vigenere(input,key);return[{method:"Vigenère",key:key,text:t,score:textScore(t)}];}
+case"xor":{let t=xorDecode(input,key);return[{method:"Repeating-key XOR",key:"Supplied key",text:t,score:textScore(t)}];}
+default:throw Error("Unknown method.");
+}}
+function auto(input){let all=[];const tests=[
+()=>attempt("caesar",input,"","decrypt"),
+()=>attempt("atbash",input),
+()=>attempt("rot13",input),
+()=>attempt("base64",input),
+()=>attempt("hex",input),
+()=>attempt("binary",input),
+()=>attempt("url",input),
+()=>attempt("morse",input)
+];for(const test of tests){try{all.push(...test());}catch(e){}}
+all.sort((a,b)=>b.score-a.score);
+return all;
 }
-
-function scoreEnglish(text) {
-  const words = text.toLowerCase().match(/[a-z]+/g) || [];
-  let points = 0;
-  for (const word of words) {
-    if (dictionary.has(word)) points += 1;
-  }
-  return points;
-}
-
-function solve() {
-  const input = document.getElementById("ciphertext").value;
-  if (!input.trim()) {
-    alert("Enter an encrypted message first.");
-    return;
-  }
-
-  const attempts = [];
-  for (let key = 0; key < 26; key++) {
-    const message = decryptCaesar(input, key);
-    attempts.push({key, message, score: scoreEnglish(message)});
-  }
-
-  // Highest score wins. In a tie, retain the lower key for consistent output.
-  attempts.sort((a, b) => b.score - a.score || a.key - b.key);
-  const best = attempts[0];
-
-  document.getElementById("bestKey").textContent = best.key;
-  document.getElementById("bestScore").textContent = best.score;
-  document.getElementById("bestMessage").textContent = best.message;
-  document.getElementById("confidence").textContent =
-    best.score === 0
-      ? "No dictionary words matched. The message may use uncommon words, another language, or a different cipher."
-      : "Best dictionary match among 26 possible shifts. Check the result, especially for short messages.";
-
-  const tbody = document.getElementById("attempts");
-  tbody.replaceChildren();
-  for (const item of attempts) {
-    const row = document.createElement("tr");
-    if (item.key === best.key) row.className = "best";
-    for (const value of [item.key, item.message, item.score]) {
-      const cell = document.createElement("td");
-      cell.textContent = value;
-      row.appendChild(cell);
-    }
-    tbody.appendChild(row);
-  }
-  document.getElementById("results").classList.remove("hidden");
-}
-
-document.getElementById("solve").addEventListener("click", solve);
-document.getElementById("example").addEventListener("click", () => {
-  document.getElementById("ciphertext").value = "WKLV LV D VHFUHW PHVVDJH";
-  solve();
-});
-document.getElementById("clear").addEventListener("click", () => {
-  document.getElementById("ciphertext").value = "";
-  document.getElementById("results").classList.add("hidden");
-});
-document.getElementById("ciphertext").addEventListener("keydown", event => {
-  if ((event.ctrlKey || event.metaKey) && event.key === "Enter") solve();
-});
+function show(items,manual){if(!items.length)throw Error("No supported decoding produced a result. Check the input and selected method.");const best=items[0];$("output").classList.remove("hidden");$("methodName").textContent=best.method;$("decoded").textContent=best.text;$("details").textContent="Key / setting: "+best.key+" · English-match score: "+best.score.toFixed(1);$("resultTitle").textContent=manual?"Decoding result":"Best detected candidate";$("caveat").textContent=manual?"":"Automatic detection is a best-effort guess. A readable-looking output does not prove the method is correct.";const body=$("candidates");body.replaceChildren();for(const item of items.slice(0,30)){let tr=document.createElement("tr");for(const val of [item.method+" — "+item.key,item.text,item.score.toFixed(1)]){let td=document.createElement("td");td.textContent=val;tr.appendChild(td);}body.appendChild(tr);}let hist=document.createElement("div");hist.className="history-item";hist.textContent=best.method+" · "+best.key+" → "+best.text.slice(0,110);if($("history").textContent==="No results yet.")$("history").textContent="";$("history").prepend(hist);}
+function run(){let input=$("input").value;if(!input.trim()){alert("Paste some text first.");return;}try{let method=$("method").value;let items=method==="auto"?auto(input):attempt(method,input,$("key").value,$("direction").value);show(items,method!=="auto");}catch(e){alert(e.message);}}
+$("run").addEventListener("click",run);
+$("sample").addEventListener("click",()=>{$("input").value="WKLV LV D VHFUHW PHVVDJH";$("method").value="auto";run();});
+$("clear").addEventListener("click",()=>{$("input").value="";$("output").classList.add("hidden");});
+$("method").addEventListener("change",()=>{$("keyField").style.opacity=["vigenere","xor"].includes($("method").value)?"1":".45";});
+$("input").addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key==="Enter")run();});
 </script>
 </body>
 </html>
