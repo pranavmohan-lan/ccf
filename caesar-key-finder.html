@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caesar Key Finder</title>
+<style>
+:root{color-scheme:dark;--bg:#080d18;--panel:#111a2b;--line:#263650;--text:#edf4ff;--muted:#9aabc4;--accent:#65e0c2;--accent2:#6ea8ff}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 15% 0%,#142944 0,transparent 42%),var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+main{width:min(980px,92%);margin:48px auto}
+header{margin-bottom:28px}
+.eyebrow{color:var(--accent);font-size:.78rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase}
+h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.05;margin:10px 0}
+.sub{color:var(--muted);max-width:650px}
+.panel{background:linear-gradient(145deg,#141f33,#0e1727);border:1px solid var(--line);border-radius:18px;padding:24px;margin:18px 0;box-shadow:0 18px 50px #0003}
+label{display:block;font-weight:700;margin-bottom:9px}
+textarea{width:100%;min-height:125px;resize:vertical;background:#08111f;color:var(--text);border:1px solid #344761;border-radius:12px;padding:15px;font:inherit;outline:none}
+textarea:focus{border-color:var(--accent2);box-shadow:0 0 0 3px #6ea8ff22}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+button{border:0;border-radius:10px;padding:12px 19px;font-weight:800;font-size:.95rem;cursor:pointer}
+.primary{background:var(--accent);color:#062019}
+.secondary{background:#24334b;color:var(--text)}
+button:hover{filter:brightness(1.1)}
+.hint{font-size:.85rem;color:var(--muted);margin-top:9px}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.result-card{background:#0a1423;border:1px solid var(--line);border-radius:13px;padding:17px}
+.result-card .label{font-size:.78rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;font-weight:800}
+.result-card .value{font-size:1.5rem;font-weight:850;margin-top:5px;overflow-wrap:anywhere}
+.green{color:var(--accent)}
+.message{font-size:1.15rem!important;white-space:pre-wrap}
+table{width:100%;border-collapse:collapse;margin-top:12px;font-size:.92rem}
+th,td{text-align:left;padding:11px 9px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em}
+tr.best{background:#65e0c211}
+tr.best td:first-child{color:var(--accent);font-weight:800}
+.hidden{display:none}
+footer{text-align:center;color:var(--muted);font-size:.82rem;padding:18px}
+@media(max-width:600px){main{margin:28px auto}.panel{padding:17px}.result-grid{grid-template-columns:1fr}th,td{padding:9px 5px;font-size:.82rem}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="eyebrow">Cryptanalysis Lab / 001</div>
+  <h1>Caesar <span style="color:var(--accent)">Key Finder</span></h1>
+  <p class="sub">Enter an encrypted message. The engine tests every Caesar shift from 0 to 25, scores the results using common English words, and displays its best guess with the key.</p>
+</header>
+
+<section class="panel">
+  <label for="ciphertext">Encrypted message</label>
+  <textarea id="ciphertext" placeholder="Example: WKLV LV D VHFUHW PHVVDJH"></textarea>
+  <div class="actions">
+    <button class="primary" id="solve">Find decryption key</button>
+    <button class="secondary" id="example">Load example</button>
+    <button class="secondary" id="clear">Clear</button>
+  </div>
+  <div class="hint">Works with A–Z and a–z. Spaces, numbers and punctuation are preserved. Processing happens locally in your browser.</div>
+</section>
+
+<section id="results" class="hidden">
+  <div class="panel">
+    <div class="eyebrow">Best candidate</div>
+    <div class="result-grid" style="margin-top:14px">
+      <div class="result-card">
+        <div class="label">Discovered key</div>
+        <div class="value green" id="bestKey">—</div>
+      </div>
+      <div class="result-card">
+        <div class="label">Dictionary matches</div>
+        <div class="value" id="bestScore">—</div>
+      </div>
+      <div class="result-card" style="grid-column:1/-1">
+        <div class="label">Decrypted data</div>
+        <div class="value message" id="bestMessage">—</div>
+      </div>
+    </div>
+    <p class="hint" id="confidence"></p>
+  </div>
+  <div class="panel">
+    <h2 style="margin:0">All 26 possibilities</h2>
+    <p class="hint">The highest-scoring result is highlighted. A dictionary score is a clue, not proof; short messages may have multiple plausible answers.</p>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>Key</th><th>Decrypted text</th><th>Word matches</th></tr></thead>
+        <tbody id="attempts"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+<footer>Caesar Key Finder · Educational cryptography project</footer>
+</main>
+<script>
+"use strict";
+
+const dictionary = new Set((
+  "a about above after again all am an and any are as at be because been before " +
+  "being below between both but by can could did do does doing down during each " +
+  "few for from further had has have having he her here hers him his how i if in " +
+  "into is it its itself just me more most my no nor not now of off on once only " +
+  "or other our out over own same she should so some such than that the their " +
+  "them then there these they this those through to too under until up very was " +
+  "we were what when where which while who why will with would you your " +
+  "hello world secret message this test text code key find finder decrypt " +
+  "decrypted encryption cipher caesar meet at dawn attack tomorrow"
+).split(/\s+/));
+
+function decryptCaesar(text, shift) {
+  let output = "";
+  for (const character of text) {
+    const code = character.charCodeAt(0);
+    if (code >= 65 && code <= 90) {
+      output += String.fromCharCode(65 + ((code - 65 - shift + 26) % 26));
+    } else if (code >= 97 && code <= 122) {
+      output += String.fromCharCode(97 + ((code - 97 - shift + 26) % 26));
+    } else {
+      output += character;
+    }
+  }
+  return output;
+}
+
+function scoreEnglish(text) {
+  const words = text.toLowerCase().match(/[a-z]+/g) || [];
+  let points = 0;
+  for (const word of words) {
+    if (dictionary.has(word)) points += 1;
+  }
+  return points;
+}
+
+function solve() {
+  const input = document.getElementById("ciphertext").value;
+  if (!input.trim()) {
+    alert("Enter an encrypted message first.");
+    return;
+  }
+
+  const attempts = [];
+  for (let key = 0; key < 26; key++) {
+    const message = decryptCaesar(input, key);
+    attempts.push({key, message, score: scoreEnglish(message)});
+  }
+
+  // Highest score wins. In a tie, retain the lower key for consistent output.
+  attempts.sort((a, b) => b.score - a.score || a.key - b.key);
+  const best = attempts[0];
+
+  document.getElementById("bestKey").textContent = best.key;
+  document.getElementById("bestScore").textContent = best.score;
+  document.getElementById("bestMessage").textContent = best.message;
+  document.getElementById("confidence").textContent =
+    best.score === 0
+      ? "No dictionary words matched. The message may use uncommon words, another language, or a different cipher."
+      : "Best dictionary match among 26 possible shifts. Check the result, especially for short messages.";
+
+  const tbody = document.getElementById("attempts");
+  tbody.replaceChildren();
+  for (const item of attempts) {
+    const row = document.createElement("tr");
+    if (item.key === best.key) row.className = "best";
+    for (const value of [item.key, item.message, item.score]) {
+      const cell = document.createElement("td");
+      cell.textContent = value;
+      row.appendChild(cell);
+    }
+    tbody.appendChild(row);
+  }
+  document.getElementById("results").classList.remove("hidden");
+}
+
+document.getElementById("solve").addEventListener("click", solve);
+document.getElementById("example").addEventListener("click", () => {
+  document.getElementById("ciphertext").value = "WKLV LV D VHFUHW PHVVDJH";
+  solve();
+});
+document.getElementById("clear").addEventListener("click", () => {
+  document.getElementById("ciphertext").value = "";
+  document.getElementById("results").classList.add("hidden");
+});
+document.getElementById("ciphertext").addEventListener("keydown", event => {
+  if ((event.ctrlKey || event.metaKey) && event.key === "Enter") solve();
+});
+</script>
+</body>
+</html>
